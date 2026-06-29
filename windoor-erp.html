@@ -1,0 +1,1203 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WinDoor ERP — نظام إدارة المقاولات</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&display=swap');
+
+:root {
+  --bg: #0c1219;
+  --surface: #131e2b;
+  --surface2: #1a2840;
+  --border: #1f3352;
+  --gold: #c9a84c;
+  --gold-light: #e8c97a;
+  --gold-dim: rgba(201,168,76,0.12);
+  --text: #e2eaf4;
+  --text-dim: #6b8aab;
+  --success: #2ecc71;
+  --danger: #e74c3c;
+  --warning: #f39c12;
+  --info: #3498db;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:'Cairo',sans-serif; background:var(--bg); color:var(--text); min-height:100vh; }
+
+/* ===== LOGIN PAGE ===== */
+#loginPage {
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background: radial-gradient(ellipse at 60% 40%, #1a2840 0%, #0c1219 70%);
+}
+
+.login-box {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 48px 40px;
+  width: 400px;
+  box-shadow: 0 32px 80px rgba(0,0,0,0.5);
+}
+
+.login-logo {
+  text-align: center;
+  margin-bottom: 36px;
+}
+
+.login-logo .icon {
+  width: 64px; height: 64px;
+  background: linear-gradient(135deg, var(--gold), var(--gold-light));
+  border-radius: 16px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 30px;
+  margin: 0 auto 16px;
+}
+
+.login-logo h1 { font-size: 22px; font-weight: 900; color: var(--gold); }
+.login-logo p { font-size: 13px; color: var(--text-dim); margin-top: 4px; }
+
+.form-group { margin-bottom: 18px; }
+.form-group label { display: block; font-size: 12px; color: var(--text-dim); font-weight: 700; margin-bottom: 8px; }
+.form-group input {
+  width: 100%;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 12px 16px;
+  color: var(--text);
+  font-family: 'Cairo', sans-serif;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.2s;
+  direction: ltr;
+  text-align: right;
+}
+.form-group input:focus { border-color: var(--gold); }
+
+.login-btn {
+  width: 100%;
+  background: linear-gradient(135deg, var(--gold), var(--gold-light));
+  border: none;
+  border-radius: 10px;
+  padding: 14px;
+  color: #0c1219;
+  font-family: 'Cairo', sans-serif;
+  font-size: 15px;
+  font-weight: 900;
+  cursor: pointer;
+  margin-top: 8px;
+  transition: all 0.2s;
+}
+.login-btn:hover { transform: translateY(-1px); box-shadow: 0 8px 24px rgba(201,168,76,0.3); }
+.login-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+
+.login-error {
+  background: rgba(231,76,60,0.1);
+  border: 1px solid rgba(231,76,60,0.3);
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: 13px;
+  color: var(--danger);
+  margin-top: 14px;
+  display: none;
+}
+
+/* ===== MAIN APP ===== */
+#app {
+  display: none;
+  min-height: 100vh;
+  flex-direction: column;
+}
+
+/* TOP NAV */
+.topnav {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  height: 58px;
+  display: flex;
+  align-items: center;
+  padding: 0 24px;
+  gap: 16px;
+  position: sticky; top: 0; z-index: 100;
+}
+
+.topnav-logo { display: flex; align-items: center; gap: 10px; }
+.topnav-logo .icon {
+  width: 36px; height: 36px;
+  background: linear-gradient(135deg, var(--gold), var(--gold-light));
+  border-radius: 9px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px;
+}
+.topnav-logo span { font-size: 15px; font-weight: 900; color: var(--gold); }
+
+.topnav-nav { display: flex; gap: 2px; margin-right: 24px; flex: 1; overflow-x: auto; }
+
+.tnav-btn {
+  display: flex; align-items: center; gap: 7px;
+  padding: 7px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 13px;
+  color: var(--text-dim);
+  white-space: nowrap;
+  transition: all 0.2s;
+  border: none; background: none;
+  font-family: 'Cairo', sans-serif;
+}
+.tnav-btn:hover { background: var(--surface2); color: var(--text); }
+.tnav-btn.active { background: var(--gold-dim); color: var(--gold); }
+.tnav-btn .icon { font-size: 16px; }
+
+.topnav-right { display: flex; align-items: center; gap: 12px; margin-right: auto; }
+
+.user-badge {
+  display: flex; align-items: center; gap: 8px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 6px 14px;
+  font-size: 13px;
+}
+.user-badge .role-tag {
+  font-size: 10px;
+  padding: 2px 8px;
+  border-radius: 20px;
+  font-weight: 700;
+}
+.role-admin { background: rgba(201,168,76,0.15); color: var(--gold); }
+.role-accountant { background: rgba(46,204,113,0.15); color: var(--success); }
+.role-supervisor { background: rgba(52,152,219,0.15); color: var(--info); }
+.role-employee { background: rgba(107,138,171,0.15); color: var(--text-dim); }
+
+.logout-btn {
+  background: rgba(231,76,60,0.1);
+  border: 1px solid rgba(231,76,60,0.2);
+  border-radius: 8px;
+  padding: 6px 14px;
+  color: var(--danger);
+  cursor: pointer;
+  font-size: 13px;
+  font-family: 'Cairo', sans-serif;
+  font-weight: 700;
+  transition: all 0.2s;
+}
+.logout-btn:hover { background: rgba(231,76,60,0.2); }
+
+/* ===== CONTENT ===== */
+#content {
+  flex: 1;
+  padding: 28px;
+  max-width: 1400px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.page { display: none; }
+.page.active { display: block; }
+
+/* PAGE HEADER */
+.page-header {
+  display: flex; justify-content: space-between; align-items: flex-start;
+  margin-bottom: 28px;
+}
+.page-header h2 { font-size: 22px; font-weight: 900; }
+.page-header p { font-size: 13px; color: var(--text-dim); margin-top: 4px; }
+
+/* KPI GRID */
+.kpi-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 16px; margin-bottom: 24px; }
+.kpi-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 20px;
+  position: relative; overflow: hidden;
+}
+.kpi-card::after {
+  content: ''; position: absolute; top: -20px; left: -20px;
+  width: 80px; height: 80px; border-radius: 50%; opacity: 0.08;
+}
+.kpi-gold::after { background: var(--gold); }
+.kpi-blue::after { background: var(--info); }
+.kpi-green::after { background: var(--success); }
+.kpi-orange::after { background: var(--warning); }
+.kpi-icon { font-size: 26px; margin-bottom: 12px; }
+.kpi-label { font-size: 12px; color: var(--text-dim); margin-bottom: 6px; }
+.kpi-value { font-size: 28px; font-weight: 900; }
+.kpi-gold .kpi-value { color: var(--gold); }
+.kpi-blue .kpi-value { color: var(--info); }
+.kpi-green .kpi-value { color: var(--success); }
+.kpi-orange .kpi-value { color: var(--warning); }
+.kpi-sub { font-size: 11px; color: var(--text-dim); margin-top: 4px; }
+
+/* CARD */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  overflow: hidden;
+  margin-bottom: 20px;
+}
+.card-header {
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border);
+  display: flex; justify-content: space-between; align-items: center;
+}
+.card-title { font-size: 14px; font-weight: 700; }
+.card-body { padding: 20px; }
+
+/* TABLE */
+table { width: 100%; border-collapse: collapse; }
+th {
+  text-align: right; padding: 10px 16px;
+  font-size: 11px; color: var(--text-dim);
+  border-bottom: 1px solid var(--border);
+  font-weight: 700; letter-spacing: 0.5px;
+}
+td {
+  padding: 13px 16px; font-size: 13px;
+  border-bottom: 1px solid rgba(31,51,82,0.5);
+  vertical-align: middle;
+}
+tr:last-child td { border-bottom: none; }
+tbody tr:hover td { background: var(--surface2); }
+
+/* BADGE */
+.badge {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 3px 10px; border-radius: 20px;
+  font-size: 11px; font-weight: 700;
+}
+.badge-success { background: rgba(46,204,113,0.12); color: var(--success); }
+.badge-warning { background: rgba(243,156,18,0.12); color: var(--warning); }
+.badge-danger { background: rgba(231,76,60,0.12); color: var(--danger); }
+.badge-info { background: rgba(52,152,219,0.12); color: var(--info); }
+.badge-gold { background: rgba(201,168,76,0.12); color: var(--gold); }
+.badge-gray { background: rgba(107,138,171,0.12); color: var(--text-dim); }
+
+/* FORM */
+.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.form-group-modal { display: flex; flex-direction: column; gap: 6px; }
+.form-group-modal.full { grid-column: 1/-1; }
+.form-group-modal label { font-size: 12px; color: var(--text-dim); font-weight: 700; }
+.form-group-modal input,
+.form-group-modal select,
+.form-group-modal textarea {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 10px 14px;
+  color: var(--text);
+  font-family: 'Cairo', sans-serif;
+  font-size: 13px;
+  outline: none;
+  transition: border-color 0.2s;
+  direction: rtl;
+}
+.form-group-modal input:focus,
+.form-group-modal select:focus,
+.form-group-modal textarea:focus { border-color: var(--gold); }
+.form-group-modal select option { background: var(--surface); }
+.form-group-modal textarea { resize: vertical; min-height: 80px; }
+
+/* BUTTONS */
+.btn {
+  padding: 10px 20px; border: none; border-radius: 8px;
+  cursor: pointer; font-size: 13px; font-weight: 700;
+  font-family: 'Cairo', sans-serif; transition: all 0.2s;
+  display: inline-flex; align-items: center; gap: 6px;
+}
+.btn-primary { background: var(--gold); color: #0c1219; }
+.btn-primary:hover { background: var(--gold-light); }
+.btn-secondary { background: var(--surface2); color: var(--text); border: 1px solid var(--border); }
+.btn-secondary:hover { border-color: var(--gold); color: var(--gold); }
+.btn-danger { background: rgba(231,76,60,0.1); color: var(--danger); border: 1px solid rgba(231,76,60,0.3); }
+.btn-success { background: rgba(46,204,113,0.1); color: var(--success); border: 1px solid rgba(46,204,113,0.3); }
+.btn-sm { padding: 5px 12px; font-size: 11px; }
+.btn-row { display: flex; gap: 10px; margin-top: 20px; }
+
+/* MODAL */
+.modal-overlay {
+  display: none; position: fixed; inset: 0;
+  background: rgba(0,0,0,0.75); z-index: 500;
+  align-items: center; justify-content: center;
+}
+.modal-overlay.open { display: flex; }
+.modal {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 32px;
+  width: 580px; max-width: 95vw;
+  max-height: 90vh; overflow-y: auto;
+}
+.modal-title {
+  font-size: 18px; font-weight: 900;
+  color: var(--gold); margin-bottom: 24px;
+}
+
+/* PROGRESS */
+.prog-wrap { background: var(--bg); border-radius: 6px; height: 8px; overflow: hidden; }
+.prog-bar { height: 100%; border-radius: 6px; }
+.prog-gold { background: linear-gradient(90deg, var(--gold), var(--gold-light)); }
+.prog-blue { background: linear-gradient(90deg, #2980b9, var(--info)); }
+.prog-green { background: linear-gradient(90deg, #27ae60, var(--success)); }
+
+/* GRID */
+.grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.grid3 { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; }
+
+/* ALERT */
+.alert {
+  padding: 12px 16px; border-radius: 10px;
+  font-size: 13px; margin-bottom: 12px;
+  display: flex; align-items: center; gap: 10px;
+}
+.alert-warning { background: rgba(243,156,18,0.08); border: 1px solid rgba(243,156,18,0.25); color: var(--warning); }
+.alert-danger { background: rgba(231,76,60,0.08); border: 1px solid rgba(231,76,60,0.25); color: var(--danger); }
+.alert-success { background: rgba(46,204,113,0.08); border: 1px solid rgba(46,204,113,0.25); color: var(--success); }
+
+/* TABS */
+.tabs { display: flex; gap: 4px; background: var(--surface); border-radius: 10px; padding: 4px; margin-bottom: 20px; }
+.tab { padding: 8px 18px; border-radius: 8px; cursor: pointer; font-size: 13px; color: var(--text-dim); font-weight: 600; transition: all 0.2s; }
+.tab.active { background: var(--gold); color: #0c1219; }
+
+/* PERMISSION GRID */
+.perm-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.perm-item {
+  display: flex; align-items: center; justify-content: space-between;
+  background: var(--bg); border: 1px solid var(--border);
+  border-radius: 8px; padding: 10px 14px; font-size: 13px;
+}
+.perm-toggle {
+  width: 38px; height: 20px; background: var(--border);
+  border-radius: 10px; position: relative; cursor: pointer;
+  transition: background 0.2s; border: none; outline: none;
+}
+.perm-toggle.on { background: var(--gold); }
+.perm-toggle::after {
+  content: ''; position: absolute;
+  width: 14px; height: 14px; background: #fff;
+  border-radius: 50%; top: 3px; right: 3px; transition: right 0.2s;
+}
+.perm-toggle.on::after { right: 21px; }
+
+/* CHART BARS */
+.chartbar { display: flex; flex-direction: column; gap: 12px; }
+.chartbar-row { display: flex; align-items: center; gap: 12px; }
+.chartbar-label { font-size: 12px; color: var(--text-dim); width: 110px; text-align: right; }
+.chartbar-outer { flex: 1; background: var(--bg); border-radius: 5px; height: 10px; overflow: hidden; }
+.chartbar-inner { height: 100%; border-radius: 5px; }
+.chartbar-val { font-size: 12px; font-weight: 700; width: 50px; }
+
+/* SPINNER */
+.spinner {
+  display: inline-block; width: 18px; height: 18px;
+  border: 2px solid rgba(201,168,76,0.3);
+  border-top-color: var(--gold);
+  border-radius: 50%; animation: spin 0.7s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* TOAST */
+.toast {
+  position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 12px; padding: 14px 24px;
+  font-size: 14px; font-weight: 700;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+  z-index: 9999; display: none; align-items: center; gap: 10px;
+  min-width: 280px; justify-content: center;
+}
+.toast.show { display: flex; }
+.toast.success { border-color: var(--success); color: var(--success); }
+.toast.error { border-color: var(--danger); color: var(--danger); }
+
+/* SCROLLBAR */
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+/* NO ACCESS */
+.no-access {
+  text-align: center; padding: 80px 20px; color: var(--text-dim);
+}
+.no-access .icon { font-size: 64px; margin-bottom: 16px; }
+.no-access h3 { font-size: 18px; color: var(--text); margin-bottom: 8px; }
+
+/* MINI STATS */
+.ministats { display: flex; gap: 14px; margin-bottom: 20px; }
+.ministat {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 10px; padding: 14px 18px; flex: 1; text-align: center;
+}
+.ministat-val { font-size: 22px; font-weight: 900; color: var(--gold); }
+.ministat-label { font-size: 11px; color: var(--text-dim); margin-top: 2px; }
+
+.text-gold { color: var(--gold); }
+.text-dim { color: var(--text-dim); font-size: 12px; }
+.text-right { text-align: right; }
+.mt8 { margin-top: 8px; }
+.mb16 { margin-bottom: 16px; }
+.flex { display: flex; }
+.gap8 { gap: 8px; }
+.items-center { align-items: center; }
+.justify-between { justify-content: space-between; }
+.w100 { width: 100%; }
+</style>
+</head>
+<body>
+
+<!-- ===== LOGIN ===== -->
+<div id="loginPage">
+  <div class="login-box">
+    <div class="login-logo">
+      <div class="icon">🏗️</div>
+      <h1>WinDoor ERP</h1>
+      <p>نظام إدارة شركة المقاولات</p>
+    </div>
+    <div class="form-group">
+      <label>البريد الإلكتروني</label>
+      <input type="email" id="loginEmail" placeholder="example@email.com" autocomplete="email">
+    </div>
+    <div class="form-group">
+      <label>كلمة المرور</label>
+      <input type="password" id="loginPass" placeholder="••••••••" autocomplete="current-password">
+    </div>
+    <button class="login-btn" id="loginBtn" onclick="doLogin()">دخول</button>
+    <div class="login-error" id="loginError"></div>
+  </div>
+</div>
+
+<!-- ===== APP ===== -->
+<div id="app" style="display:none;flex-direction:column;min-height:100vh">
+
+  <!-- TOP NAV -->
+  <nav class="topnav">
+    <div class="topnav-logo">
+      <div class="icon">🏗️</div>
+      <span>WinDoor ERP</span>
+    </div>
+    <div class="topnav-nav" id="topNav">
+      <!-- injected by JS based on permissions -->
+    </div>
+    <div class="topnav-right">
+      <div class="user-badge">
+        <span id="userNameBadge">—</span>
+        <span class="role-tag" id="userRoleBadge">—</span>
+      </div>
+      <button class="logout-btn" onclick="doLogout()">خروج</button>
+    </div>
+  </nav>
+
+  <!-- CONTENT -->
+  <div id="content">
+
+    <!-- DASHBOARD -->
+    <div class="page" id="page-dashboard">
+      <div class="page-header">
+        <div><h2>📊 لوحة التحكم</h2><p>نظرة عامة على أداء الشركة</p></div>
+      </div>
+      <div class="kpi-grid">
+        <div class="kpi-card kpi-gold"><div class="kpi-icon">💰</div><div class="kpi-label">إجمالي العقود</div><div class="kpi-value">٢.٤M</div><div class="kpi-sub">جنيه مصري</div></div>
+        <div class="kpi-card kpi-blue"><div class="kpi-icon">🏢</div><div class="kpi-label">مشاريع جارية</div><div class="kpi-value">٥</div><div class="kpi-sub">من إجمالي ١٢ مشروع</div></div>
+        <div class="kpi-card kpi-green"><div class="kpi-icon">✅</div><div class="kpi-label">فواتير محصلة</div><div class="kpi-value">٨٥٪</div><div class="kpi-sub">من الإجمالي</div></div>
+        <div class="kpi-card kpi-orange"><div class="kpi-icon">👷</div><div class="kpi-label">الموظفون</div><div class="kpi-value">٣٨</div><div class="kpi-sub">عامل وموظف</div></div>
+      </div>
+      <div class="grid3">
+        <div class="card">
+          <div class="card-header"><div class="card-title">🏗️ أحدث المشاريع</div></div>
+          <div class="card-body" style="padding:0">
+            <table>
+              <thead><tr><th>المشروع</th><th>النوع</th><th>التقدم</th><th>الحالة</th></tr></thead>
+              <tbody>
+                <tr><td><b>برج القاهرة الجديدة</b><br><span class="text-dim">أحمد محمود</span></td><td>ألمنيوم</td><td><div class="prog-wrap" style="min-width:80px"><div class="prog-bar prog-gold" style="width:75%"></div></div><span class="text-dim">٧٥٪</span></td><td><span class="badge badge-info">جاري</span></td></tr>
+                <tr><td><b>مجمع المعادي</b><br><span class="text-dim">شركة الوادي</span></td><td>يو بي في سي</td><td><div class="prog-wrap"><div class="prog-bar prog-blue" style="width:40%"></div></div><span class="text-dim">٤٠٪</span></td><td><span class="badge badge-info">جاري</span></td></tr>
+                <tr><td><b>فيلا الشيخ زايد</b><br><span class="text-dim">خالد إبراهيم</span></td><td>شاتر</td><td><div class="prog-wrap"><div class="prog-bar prog-green" style="width:95%"></div></div><span class="text-dim">٩٥٪</span></td><td><span class="badge badge-warning">تسليم</span></td></tr>
+                <tr><td><b>مصنع أكتوبر</b><br><span class="text-dim">مجموعة الصناعات</span></td><td>حديد</td><td><div class="prog-wrap"><div class="prog-bar prog-gold" style="width:20%"></div></div><span class="text-dim">٢٠٪</span></td><td><span class="badge badge-gold">جديد</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:16px">
+          <div class="card">
+            <div class="card-header"><div class="card-title">⚠️ تنبيهات المخزن</div></div>
+            <div class="card-body">
+              <div class="alert alert-danger">ألمنيوم ٦٠٦٣ — متبقي ٢٠٪ فقط</div>
+              <div class="alert alert-warning">مسامير ستانلس — مخزون منخفض</div>
+              <div class="alert alert-warning">مطاط تسليح — يحتاج توريد</div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-header"><div class="card-title">📊 توزيع الأعمال</div></div>
+            <div class="card-body">
+              <div class="chartbar">
+                <div class="chartbar-row"><div class="chartbar-label">ألمنيوم</div><div class="chartbar-outer"><div class="chartbar-inner" style="width:65%;background:#9ba8b3"></div></div><div class="chartbar-val">٦٥٪</div></div>
+                <div class="chartbar-row"><div class="chartbar-label">يو بي في سي</div><div class="chartbar-outer"><div class="chartbar-inner" style="width:15%;background:#5dade2"></div></div><div class="chartbar-val">١٥٪</div></div>
+                <div class="chartbar-row"><div class="chartbar-label">شاتر</div><div class="chartbar-outer"><div class="chartbar-inner" style="width:10%;background:#e67e22"></div></div><div class="chartbar-val">١٠٪</div></div>
+                <div class="chartbar-row"><div class="chartbar-label">ستيورت</div><div class="chartbar-outer"><div class="chartbar-inner" style="width:7%;background:#9b59b6"></div></div><div class="chartbar-val">٧٪</div></div>
+                <div class="chartbar-row"><div class="chartbar-label">حديد</div><div class="chartbar-outer"><div class="chartbar-inner" style="width:3%;background:#7f8c8d"></div></div><div class="chartbar-val">٣٪</div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CLIENTS -->
+    <div class="page" id="page-clients">
+      <div class="page-header">
+        <div><h2>👥 العملاء والعقود</h2><p>إدارة بيانات العملاء والعقود</p></div>
+        <button class="btn btn-primary" onclick="openModal('addClientModal')">+ إضافة عميل</button>
+      </div>
+      <div class="ministats">
+        <div class="ministat"><div class="ministat-val">٣٢</div><div class="ministat-label">إجمالي العملاء</div></div>
+        <div class="ministat"><div class="ministat-val">١٢</div><div class="ministat-label">عقود نشطة</div></div>
+        <div class="ministat"><div class="ministat-val">٢.٤M</div><div class="ministat-label">قيمة العقود</div></div>
+        <div class="ministat"><div class="ministat-val">٣</div><div class="ministat-label">مدفوعات متأخرة</div></div>
+      </div>
+      <div class="card">
+        <div class="card-body" style="padding:0">
+          <table>
+            <thead><tr><th>#</th><th>اسم العميل</th><th>النوع</th><th>الموبايل</th><th>قيمة العقود</th><th>حالة الدفع</th></tr></thead>
+            <tbody>
+              <tr><td>١</td><td><b>أحمد محمود السيد</b></td><td>أفراد</td><td>٠١٢٢-٣٤٥-٦٧٨٩</td><td class="text-gold"><b>٤٥٠,٠٠٠</b></td><td><span class="badge badge-success">مسدد</span></td></tr>
+              <tr><td>٢</td><td><b>شركة الوادي للتطوير</b></td><td>شركات</td><td>٠١٠٠-١١١-٢٢٢٢</td><td class="text-gold"><b>٨٨٠,٠٠٠</b></td><td><span class="badge badge-warning">جزئي</span></td></tr>
+              <tr><td>٣</td><td><b>خالد إبراهيم منصور</b></td><td>أفراد</td><td>٠١١١-٥٥٥-٧٧٧٧</td><td class="text-gold"><b>٢٣٠,٠٠٠</b></td><td><span class="badge badge-danger">متأخر</span></td></tr>
+              <tr><td>٤</td><td><b>مجموعة الصناعات العربية</b></td><td>مصانع</td><td>٠١٢٠-٩٩٩-٤٤٤٤</td><td class="text-gold"><b>٦٥٠,٠٠٠</b></td><td><span class="badge badge-info">قيد التنفيذ</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- PROJECTS -->
+    <div class="page" id="page-projects">
+      <div class="page-header">
+        <div><h2>🏢 المشاريع</h2><p>متابعة مراحل تنفيذ المشاريع</p></div>
+        <button class="btn btn-primary" onclick="openModal('addProjectModal')">+ مشروع جديد</button>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:14px">
+        <div class="card" style="margin:0">
+          <div class="card-body">
+            <div class="flex justify-between items-center mb16">
+              <div><div style="font-size:15px;font-weight:700">🏗️ برج القاهرة الجديدة</div><div class="text-dim mt8">أحمد محمود · القاهرة الجديدة · ألمنيوم</div></div>
+              <span class="badge badge-info">جاري</span>
+            </div>
+            <div class="prog-wrap" style="height:10px;margin-bottom:6px"><div class="prog-bar prog-gold" style="width:75%"></div></div>
+            <div class="flex justify-between"><span class="text-dim">التقدم: ٧٥٪</span><span class="text-gold font-bold">٤٥٠,٠٠٠ ج.م</span></div>
+          </div>
+        </div>
+        <div class="card" style="margin:0">
+          <div class="card-body">
+            <div class="flex justify-between items-center mb16">
+              <div><div style="font-size:15px;font-weight:700">🏠 مجمع المعادي السكني</div><div class="text-dim mt8">شركة الوادي · المعادي · يو بي في سي</div></div>
+              <span class="badge badge-info">جاري</span>
+            </div>
+            <div class="prog-wrap" style="height:10px;margin-bottom:6px"><div class="prog-bar prog-blue" style="width:40%"></div></div>
+            <div class="flex justify-between"><span class="text-dim">التقدم: ٤٠٪</span><span class="text-gold">٨٨٠,٠٠٠ ج.م</span></div>
+          </div>
+        </div>
+        <div class="card" style="margin:0">
+          <div class="card-body">
+            <div class="flex justify-between items-center mb16">
+              <div><div style="font-size:15px;font-weight:700">🏡 فيلا الشيخ زايد</div><div class="text-dim mt8">خالد إبراهيم · الشيخ زايد · شاتر</div></div>
+              <span class="badge badge-warning">تسليم قريب</span>
+            </div>
+            <div class="prog-wrap" style="height:10px;margin-bottom:6px"><div class="prog-bar prog-green" style="width:95%"></div></div>
+            <div class="flex justify-between"><span class="text-dim">التقدم: ٩٥٪</span><span class="text-gold">٢٣٠,٠٠٠ ج.م</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- WAREHOUSE -->
+    <div class="page" id="page-warehouse">
+      <div class="page-header">
+        <div><h2>🏭 المخازن والمواد</h2><p>متابعة مخزون الخامات</p></div>
+        <button class="btn btn-primary">+ إضافة مواد</button>
+      </div>
+      <div class="alert alert-danger">⚠️ تنبيه: ٣ أصناف وصلت للحد الأدنى وتحتاج توريد عاجل</div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px">
+        <div class="card" style="margin:0"><div class="card-body"><div style="font-size:26px;margin-bottom:8px">🔩</div><div style="font-weight:700;margin-bottom:4px">بروفيل ألمنيوم ٦٠٦٣</div><div style="font-size:24px;font-weight:900;color:var(--gold)">٢٤٠ <span style="font-size:14px;color:var(--text-dim)">طن</span></div><span class="badge badge-success mt8">متوفر</span></div></div>
+        <div class="card" style="margin:0"><div class="card-body"><div style="font-size:26px;margin-bottom:8px">🪟</div><div style="font-weight:700;margin-bottom:4px">ألمنيوم مطفي</div><div style="font-size:24px;font-weight:900;color:var(--danger)">٤٨ <span style="font-size:14px;color:var(--text-dim)">طن</span></div><span class="badge badge-danger mt8">منخفض</span></div></div>
+        <div class="card" style="margin:0"><div class="card-body"><div style="font-size:26px;margin-bottom:8px">🏗️</div><div style="font-weight:700;margin-bottom:4px">بروفيل يو بي في سي</div><div style="font-size:24px;font-weight:900;color:var(--gold)">١٨٠ <span style="font-size:14px;color:var(--text-dim)">طن</span></div><span class="badge badge-success mt8">متوفر</span></div></div>
+        <div class="card" style="margin:0"><div class="card-body"><div style="font-size:26px;margin-bottom:8px">🪞</div><div style="font-weight:700;margin-bottom:4px">شرائح شاتر</div><div style="font-size:24px;font-weight:900;color:var(--gold)">٣,٢٠٠ <span style="font-size:14px;color:var(--text-dim)">م²</span></div><span class="badge badge-success mt8">متوفر</span></div></div>
+        <div class="card" style="margin:0"><div class="card-body"><div style="font-size:26px;margin-bottom:8px">⚙️</div><div style="font-weight:700;margin-bottom:4px">حديد مجلفن</div><div style="font-size:24px;font-weight:900;color:var(--warning)">٢٢ <span style="font-size:14px;color:var(--text-dim)">طن</span></div><span class="badge badge-warning mt8">تحت الطلب</span></div></div>
+        <div class="card" style="margin:0"><div class="card-body"><div style="font-size:26px;margin-bottom:8px">🔧</div><div style="font-weight:700;margin-bottom:4px">مسامير ستانلس</div><div style="font-size:24px;font-weight:900;color:var(--danger)">٢,٠٠٠ <span style="font-size:14px;color:var(--text-dim)">كجم</span></div><span class="badge badge-danger mt8">منخفض</span></div></div>
+      </div>
+    </div>
+
+    <!-- INVOICES -->
+    <div class="page" id="page-invoices">
+      <div class="page-header">
+        <div><h2>🧾 الفواتير والمدفوعات</h2><p>متابعة الفواتير والتحصيل</p></div>
+        <button class="btn btn-primary" onclick="openModal('addInvoiceModal')">+ فاتورة جديدة</button>
+      </div>
+      <div style="background:linear-gradient(135deg,var(--surface2),var(--surface));border:1px solid var(--border);border-radius:14px;padding:20px;margin-bottom:20px;display:flex;justify-content:space-between;align-items:center">
+        <div><div style="font-size:13px;color:var(--text-dim)">إجمالي الفواتير — يونيو ٢٠٢٦</div><div style="font-size:28px;font-weight:900;color:var(--gold)">٢,٤٢٠,٠٠٠ ج.م</div></div>
+        <div style="display:flex;gap:28px;text-align:center">
+          <div><div class="text-dim">محصل</div><div style="font-size:20px;font-weight:900;color:var(--success)">٢,٠٥٠,٠٠٠</div></div>
+          <div><div class="text-dim">متبقي</div><div style="font-size:20px;font-weight:900;color:var(--danger)">٣٧٠,٠٠٠</div></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-body" style="padding:0">
+          <table>
+            <thead><tr><th>رقم الفاتورة</th><th>العميل</th><th>المبلغ</th><th>الاستحقاق</th><th>الحالة</th></tr></thead>
+            <tbody>
+              <tr><td><b>#INV-041</b></td><td>أحمد محمود</td><td class="text-gold"><b>١٨٠,٠٠٠</b></td><td>١٥ يونيو</td><td><span class="badge badge-success">مسددة</span></td></tr>
+              <tr><td><b>#INV-042</b></td><td>شركة الوادي</td><td class="text-gold"><b>٣٥٢,٠٠٠</b></td><td>٢٠ يونيو</td><td><span class="badge badge-warning">جزئي</span></td></tr>
+              <tr><td><b>#INV-043</b></td><td>خالد إبراهيم</td><td class="text-gold"><b>٩٢,٠٠٠</b></td><td>١٠ يونيو</td><td><span class="badge badge-danger">متأخرة</span></td></tr>
+              <tr><td><b>#INV-044</b></td><td>مجموعة الصناعات</td><td class="text-gold"><b>٢٦٠,٠٠٠</b></td><td>٣٠ يونيو</td><td><span class="badge badge-info">معلقة</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ACCOUNTS -->
+    <div class="page" id="page-accounts">
+      <div class="page-header">
+        <div><h2>💰 الحسابات العامة</h2><p>الإيرادات والمصروفات</p></div>
+      </div>
+      <div class="kpi-grid">
+        <div class="kpi-card kpi-green"><div class="kpi-icon">📈</div><div class="kpi-label">إيرادات الشهر</div><div class="kpi-value">٣٨٠K</div></div>
+        <div class="kpi-card kpi-orange"><div class="kpi-icon">📉</div><div class="kpi-label">مصروفات الشهر</div><div class="kpi-value">٢١٠K</div></div>
+        <div class="kpi-card kpi-gold"><div class="kpi-icon">💵</div><div class="kpi-label">صافي الربح</div><div class="kpi-value">١٧٠K</div></div>
+        <div class="kpi-card kpi-blue"><div class="kpi-icon">🏦</div><div class="kpi-label">الرصيد البنكي</div><div class="kpi-value">٨٤٥K</div></div>
+      </div>
+      <div class="card">
+        <div class="card-header"><div class="card-title">آخر المعاملات المالية</div></div>
+        <div class="card-body" style="padding:0">
+          <table>
+            <thead><tr><th>التاريخ</th><th>البيان</th><th>النوع</th><th>المبلغ</th></tr></thead>
+            <tbody>
+              <tr><td>٢٦/٦</td><td>تحصيل دفعة - برج القاهرة</td><td><span class="badge badge-success">إيراد</span></td><td class="text-gold">+١٨٠,٠٠٠</td></tr>
+              <tr><td>٢٥/٦</td><td>رواتب الموظفين</td><td><span class="badge badge-danger">مصروف</span></td><td style="color:var(--danger)">-١٦٢,٤٠٠</td></tr>
+              <tr><td>٢٣/٦</td><td>شراء بروفيل ألمنيوم</td><td><span class="badge badge-danger">مصروف</span></td><td style="color:var(--danger)">-٤٥,٠٠٠</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- EMPLOYEES -->
+    <div class="page" id="page-employees">
+      <div class="page-header">
+        <div><h2>👷 الموظفين والعمال</h2><p>إدارة فريق العمل</p></div>
+        <button class="btn btn-primary">+ إضافة موظف</button>
+      </div>
+      <div class="card">
+        <div class="card-body" style="padding:0">
+          <table>
+            <thead><tr><th>الاسم</th><th>الوظيفة</th><th>التخصص</th><th>الراتب</th><th>الحالة</th></tr></thead>
+            <tbody>
+              <tr><td><b>م. هشام علي</b></td><td>مشرف مشاريع</td><td>ألمنيوم</td><td class="text-gold"><b>٨,٥٠٠</b></td><td><span class="badge badge-success">نشط</span></td></tr>
+              <tr><td><b>أحمد رضا</b></td><td>فني تركيب</td><td>يو بي في سي</td><td class="text-gold"><b>٤,٢٠٠</b></td><td><span class="badge badge-success">نشط</span></td></tr>
+              <tr><td><b>م. كريم صادق</b></td><td>مهندس موقع</td><td>يو بي في سي</td><td class="text-gold"><b>٧,٠٠٠</b></td><td><span class="badge badge-success">نشط</span></td></tr>
+              <tr><td><b>محمد السيد</b></td><td>فني تركيب</td><td>شاتر</td><td class="text-gold"><b>٣,٨٠٠</b></td><td><span class="badge badge-success">نشط</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- SALARIES -->
+    <div class="page" id="page-salaries">
+      <div class="page-header">
+        <div><h2>💵 الرواتب والأجور</h2><p>صرف الرواتب الشهرية</p></div>
+        <button class="btn btn-primary">🖨️ كشف الرواتب</button>
+      </div>
+      <div style="background:linear-gradient(135deg,var(--surface2),var(--surface));border:1px solid var(--gold);border-radius:14px;padding:20px;margin-bottom:20px;display:flex;justify-content:space-between;align-items:center">
+        <div><div class="text-dim">إجمالي رواتب يونيو ٢٠٢٦</div><div style="font-size:28px;font-weight:900;color:var(--gold)">١٦٢,٤٠٠ ج.م</div></div>
+        <div style="display:flex;gap:24px;text-align:center">
+          <div><div class="text-dim">مصروف</div><div style="font-size:18px;font-weight:900;color:var(--success)">١٤٠,٠٠٠</div></div>
+          <div><div class="text-dim">متبقي</div><div style="font-size:18px;font-weight:900;color:var(--warning)">٢٢,٤٠٠</div></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-body" style="padding:0">
+          <table>
+            <thead><tr><th>الاسم</th><th>الراتب الأساسي</th><th>الحوافز</th><th>الخصومات</th><th>الصافي</th><th>الحالة</th></tr></thead>
+            <tbody>
+              <tr><td><b>م. هشام علي</b></td><td>٨,٥٠٠</td><td class="text-gold">١,٠٠٠</td><td class="text-dim">—</td><td><b class="text-gold">٩,٥٠٠</b></td><td><span class="badge badge-success">صُرف</span></td></tr>
+              <tr><td><b>أحمد رضا</b></td><td>٤,٢٠٠</td><td class="text-gold">٥٠٠</td><td class="text-dim">—</td><td><b class="text-gold">٤,٧٠٠</b></td><td><span class="badge badge-success">صُرف</span></td></tr>
+              <tr><td><b>م. كريم صادق</b></td><td>٧,٠٠٠</td><td class="text-dim">—</td><td style="color:var(--danger)">٣٠٠</td><td><b class="text-gold">٦,٧٠٠</b></td><td><span class="badge badge-warning">معلق</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- USER MANAGEMENT (ADMIN ONLY) -->
+    <div class="page" id="page-users">
+      <div class="page-header">
+        <div><h2>👑 إدارة المستخدمين</h2><p>إضافة الموظفين وتحديد صلاحياتهم</p></div>
+        <button class="btn btn-primary" onclick="openModal('addUserModal')">+ إضافة مستخدم</button>
+      </div>
+
+      <div class="alert alert-success">✅ أنت المدير الرئيسي — تقدر تضيف مستخدمين وتحدد صلاحياتهم</div>
+
+      <div class="card">
+        <div class="card-header"><div class="card-title">المستخدمون المسجلون</div></div>
+        <div class="card-body" style="padding:0">
+          <table id="usersTable">
+            <thead><tr><th>الاسم</th><th>البريد الإلكتروني</th><th>الدور</th><th>الصلاحيات</th><th>إجراءات</th></tr></thead>
+            <tbody id="usersTableBody">
+              <tr><td colspan="5" style="text-align:center;color:var(--text-dim);padding:30px"><div class="spinner"></div> جاري التحميل...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /content -->
+</div><!-- /app -->
+
+<!-- ===== MODALS ===== -->
+
+<!-- Add User Modal -->
+<div class="modal-overlay" id="addUserModal" onclick="if(event.target===this)closeModal('addUserModal')">
+  <div class="modal">
+    <div class="modal-title">👤 إضافة مستخدم جديد</div>
+    <div class="form-grid">
+      <div class="form-group-modal full"><label>الاسم الكامل</label><input type="text" id="newUserName" placeholder="اسم الموظف"></div>
+      <div class="form-group-modal full"><label>البريد الإلكتروني</label><input type="email" id="newUserEmail" placeholder="email@example.com" style="direction:ltr;text-align:right"></div>
+      <div class="form-group-modal full"><label>كلمة المرور</label><input type="text" id="newUserPass" placeholder="كلمة مرور قوية" style="direction:ltr;text-align:right"></div>
+      <div class="form-group-modal full">
+        <label>الدور الوظيفي</label>
+        <select id="newUserRole" onchange="updatePermPresets()">
+          <option value="admin">👑 مدير — كل الصلاحيات</option>
+          <option value="accountant">💰 محاسب</option>
+          <option value="supervisor">🏗️ مشرف موقع</option>
+          <option value="employee">👷 موظف</option>
+        </select>
+      </div>
+    </div>
+
+    <div style="margin:20px 0 12px;font-size:13px;font-weight:700;color:var(--text-dim)">الصلاحيات التفصيلية</div>
+    <div class="perm-grid" id="permGrid">
+      <!-- injected by JS -->
+    </div>
+
+    <div id="addUserError" class="login-error" style="margin-top:14px"></div>
+    <div class="btn-row">
+      <button class="btn btn-primary" id="addUserBtn" onclick="createUser()">✓ إنشاء الحساب</button>
+      <button class="btn btn-secondary" onclick="closeModal('addUserModal')">إلغاء</button>
+    </div>
+  </div>
+</div>
+
+<!-- Edit User Modal -->
+<div class="modal-overlay" id="editUserModal" onclick="if(event.target===this)closeModal('editUserModal')">
+  <div class="modal">
+    <div class="modal-title">✏️ تعديل صلاحيات المستخدم</div>
+    <div id="editUserInfo" style="background:var(--bg);border-radius:10px;padding:14px;margin-bottom:20px;font-size:14px"></div>
+    <div class="form-group-modal" style="margin-bottom:16px">
+      <label>الدور الوظيفي</label>
+      <select id="editUserRole" onchange="updateEditPermPresets()">
+        <option value="admin">👑 مدير</option>
+        <option value="accountant">💰 محاسب</option>
+        <option value="supervisor">🏗️ مشرف موقع</option>
+        <option value="employee">👷 موظف</option>
+      </select>
+    </div>
+    <div style="margin-bottom:12px;font-size:13px;font-weight:700;color:var(--text-dim)">الصلاحيات</div>
+    <div class="perm-grid" id="editPermGrid"></div>
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="saveUserEdit()">✓ حفظ التعديلات</button>
+      <button class="btn btn-danger" onclick="deleteUser()">🗑️ حذف المستخدم</button>
+      <button class="btn btn-secondary" onclick="closeModal('editUserModal')">إلغاء</button>
+    </div>
+  </div>
+</div>
+
+<!-- Add Client Modal -->
+<div class="modal-overlay" id="addClientModal" onclick="if(event.target===this)closeModal('addClientModal')">
+  <div class="modal">
+    <div class="modal-title">👥 إضافة عميل جديد</div>
+    <div class="form-grid">
+      <div class="form-group-modal"><label>اسم العميل</label><input placeholder="الاسم بالكامل"></div>
+      <div class="form-group-modal"><label>نوع العميل</label><select><option>أفراد</option><option>شركات</option><option>مصانع</option></select></div>
+      <div class="form-group-modal"><label>الموبايل</label><input placeholder="01xx-xxx-xxxx"></div>
+      <div class="form-group-modal"><label>المنطقة</label><input placeholder="المدينة / المنطقة"></div>
+      <div class="form-group-modal full"><label>الخدمات المطلوبة</label><select><option>ألمنيوم</option><option>يو بي في سي</option><option>شاتر</option><option>ستيورت</option><option>حديد</option></select></div>
+    </div>
+    <div class="btn-row"><button class="btn btn-primary" onclick="closeModal('addClientModal')">✓ حفظ</button><button class="btn btn-secondary" onclick="closeModal('addClientModal')">إلغاء</button></div>
+  </div>
+</div>
+
+<!-- Add Project Modal -->
+<div class="modal-overlay" id="addProjectModal" onclick="if(event.target===this)closeModal('addProjectModal')">
+  <div class="modal">
+    <div class="modal-title">🏢 مشروع جديد</div>
+    <div class="form-grid">
+      <div class="form-group-modal full"><label>اسم المشروع</label><input placeholder="وصف موجز"></div>
+      <div class="form-group-modal"><label>العميل</label><select><option>أحمد محمود</option><option>شركة الوادي</option></select></div>
+      <div class="form-group-modal"><label>نوع الأعمال</label><select><option>ألمنيوم</option><option>يو بي في سي</option><option>شاتر</option><option>حديد</option></select></div>
+      <div class="form-group-modal"><label>قيمة العقد</label><input type="number" placeholder="0"></div>
+      <div class="form-group-modal"><label>تاريخ التسليم</label><input type="date"></div>
+    </div>
+    <div class="btn-row"><button class="btn btn-primary" onclick="closeModal('addProjectModal')">✓ إنشاء</button><button class="btn btn-secondary" onclick="closeModal('addProjectModal')">إلغاء</button></div>
+  </div>
+</div>
+
+<!-- Add Invoice Modal -->
+<div class="modal-overlay" id="addInvoiceModal" onclick="if(event.target===this)closeModal('addInvoiceModal')">
+  <div class="modal">
+    <div class="modal-title">🧾 فاتورة جديدة</div>
+    <div class="form-grid">
+      <div class="form-group-modal"><label>العميل</label><select><option>أحمد محمود</option><option>شركة الوادي</option></select></div>
+      <div class="form-group-modal"><label>المشروع</label><select><option>برج القاهرة</option><option>مجمع المعادي</option></select></div>
+      <div class="form-group-modal"><label>المبلغ</label><input type="number" placeholder="0"></div>
+      <div class="form-group-modal"><label>تاريخ الاستحقاق</label><input type="date"></div>
+    </div>
+    <div class="btn-row"><button class="btn btn-primary" onclick="closeModal('addInvoiceModal')">✓ إنشاء</button><button class="btn btn-secondary" onclick="closeModal('addInvoiceModal')">إلغاء</button></div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<!-- ===== FIREBASE + APP LOGIC ===== -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged, createUserWithEmailAndPassword }
+  from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { getFirestore, doc, setDoc, getDoc, collection, getDocs, deleteDoc, updateDoc }
+  from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+// ===== FIREBASE CONFIG =====
+const firebaseConfig = {
+  apiKey: "AIzaSyCgQGzipF7P1v0tbs55WIqKIKiNyu-eIR8",
+  authDomain: "erb-windoor.firebaseapp.com",
+  projectId: "erb-windoor",
+  storageBucket: "erb-windoor.firebasestorage.app",
+  messagingSenderId: "646958471445",
+  appId: "1:646958471445:web:e6e9fa3003ab9b1f00f11c",
+  measurementId: "G-1HW8QHR95R"
+};
+
+const firebaseApp = initializeApp(firebaseConfig);
+const auth = getAuth(firebaseApp);
+const db = getFirestore(firebaseApp);
+
+// ===== PERMISSIONS MAP =====
+const PERMISSIONS = [
+  { key: 'dashboard',  label: '📊 لوحة التحكم' },
+  { key: 'clients',    label: '👥 العملاء والعقود' },
+  { key: 'projects',   label: '🏢 المشاريع' },
+  { key: 'warehouse',  label: '🏭 المخازن' },
+  { key: 'invoices',   label: '🧾 الفواتير' },
+  { key: 'accounts',   label: '💰 الحسابات' },
+  { key: 'employees',  label: '👷 الموظفين' },
+  { key: 'salaries',   label: '💵 الرواتب' },
+];
+
+const ROLE_PRESETS = {
+  admin:      { dashboard:1,clients:1,projects:1,warehouse:1,invoices:1,accounts:1,employees:1,salaries:1 },
+  accountant: { dashboard:1,clients:0,projects:0,warehouse:0,invoices:1,accounts:1,employees:0,salaries:1 },
+  supervisor: { dashboard:1,clients:1,projects:1,warehouse:1,invoices:0,accounts:0,employees:1,salaries:0 },
+  employee:   { dashboard:1,clients:0,projects:1,warehouse:0,invoices:0,accounts:0,employees:0,salaries:0 },
+};
+
+const ROLE_LABELS = {
+  admin: '👑 مدير', accountant: '💰 محاسب',
+  supervisor: '🏗️ مشرف', employee: '👷 موظف'
+};
+
+const ROLE_CLASSES = {
+  admin: 'role-admin', accountant: 'role-accountant',
+  supervisor: 'role-supervisor', employee: 'role-employee'
+};
+
+// ===== STATE =====
+let currentUser = null;
+let currentUserData = null;
+let editingUserId = null;
+
+// ===== UTILS =====
+window.showToast = function(msg, type='success') {
+  const t = document.getElementById('toast');
+  t.textContent = (type==='success'?'✅ ':'❌ ') + msg;
+  t.className = 'toast show ' + type;
+  setTimeout(() => t.className='toast', 3000);
+}
+
+window.openModal = function(id) { document.getElementById(id).classList.add('open'); }
+window.closeModal = function(id) { document.getElementById(id).classList.remove('open'); }
+
+function buildPermGrid(containerId, preset, prefix='perm') {
+  const container = document.getElementById(containerId);
+  container.innerHTML = '';
+  PERMISSIONS.forEach(p => {
+    const on = preset[p.key] ? 'on' : '';
+    container.innerHTML += `
+      <div class="perm-item">
+        <span>${p.label}</span>
+        <button class="perm-toggle ${on}" id="${prefix}_${p.key}" onclick="this.classList.toggle('on')"></button>
+      </div>`;
+  });
+}
+
+function getPermFromGrid(prefix='perm') {
+  const perms = {};
+  PERMISSIONS.forEach(p => {
+    perms[p.key] = document.getElementById(`${prefix}_${p.key}`)?.classList.contains('on') ? 1 : 0;
+  });
+  return perms;
+}
+
+window.updatePermPresets = function() {
+  const role = document.getElementById('newUserRole').value;
+  buildPermGrid('permGrid', ROLE_PRESETS[role]);
+}
+
+window.updateEditPermPresets = function() {
+  const role = document.getElementById('editUserRole').value;
+  buildPermGrid('editPermGrid', ROLE_PRESETS[role], 'eperm');
+}
+
+// ===== AUTH STATE =====
+onAuthStateChanged(auth, async (user) => {
+  if (user) {
+    currentUser = user;
+    const snap = await getDoc(doc(db, 'users', user.uid));
+    if (snap.exists()) {
+      currentUserData = snap.data();
+    } else {
+      // First time admin — create their record
+      currentUserData = {
+        name: 'المدير الرئيسي',
+        email: user.email,
+        role: 'admin',
+        permissions: ROLE_PRESETS.admin
+      };
+      await setDoc(doc(db, 'users', user.uid), currentUserData);
+    }
+    showApp();
+  } else {
+    currentUser = null;
+    currentUserData = null;
+    showLogin();
+  }
+});
+
+// ===== LOGIN =====
+window.doLogin = async function() {
+  const email = document.getElementById('loginEmail').value.trim();
+  const pass  = document.getElementById('loginPass').value;
+  const btn   = document.getElementById('loginBtn');
+  const err   = document.getElementById('loginError');
+
+  if (!email || !pass) { err.textContent='أدخل البريد الإلكتروني وكلمة المرور'; err.style.display='block'; return; }
+
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span> جاري الدخول...';
+  err.style.display = 'none';
+
+  try {
+    await signInWithEmailAndPassword(auth, email, pass);
+  } catch(e) {
+    err.textContent = e.code === 'auth/invalid-credential' ? 'بريد إلكتروني أو كلمة مرور غير صحيحة' : 'حدث خطأ، حاول مرة أخرى';
+    err.style.display = 'block';
+    btn.disabled = false;
+    btn.textContent = 'دخول';
+  }
+}
+
+// Enter key login
+document.getElementById('loginPass').addEventListener('keydown', e => { if(e.key==='Enter') doLogin(); });
+document.getElementById('loginEmail').addEventListener('keydown', e => { if(e.key==='Enter') doLogin(); });
+
+// ===== LOGOUT =====
+window.doLogout = async function() {
+  await signOut(auth);
+}
+
+// ===== SHOW APP =====
+function showLogin() {
+  document.getElementById('loginPage').style.display = 'flex';
+  document.getElementById('app').style.display = 'none';
+  document.getElementById('loginBtn').disabled = false;
+  document.getElementById('loginBtn').textContent = 'دخول';
+}
+
+function showApp() {
+  document.getElementById('loginPage').style.display = 'none';
+  document.getElementById('app').style.display = 'flex';
+
+  // Set user badge
+  document.getElementById('userNameBadge').textContent = currentUserData.name || currentUserData.email;
+  const rb = document.getElementById('userRoleBadge');
+  rb.textContent = ROLE_LABELS[currentUserData.role] || currentUserData.role;
+  rb.className = 'role-tag ' + (ROLE_CLASSES[currentUserData.role] || '');
+
+  // Build nav
+  buildNav();
+
+  // Show first available page
+  const perms = currentUserData.permissions || {};
+  const firstPage = currentUserData.role === 'admin' ? 'dashboard' :
+    PERMISSIONS.find(p => perms[p.key])?.key || 'dashboard';
+  showPage(firstPage);
+
+  // Load users if admin
+  if (currentUserData.role === 'admin') loadUsers();
+}
+
+// ===== NAV =====
+const NAV_ITEMS = [
+  { key:'dashboard', label:'📊 الرئيسية' },
+  { key:'clients',   label:'👥 العملاء' },
+  { key:'projects',  label:'🏢 المشاريع' },
+  { key:'warehouse', label:'🏭 المخازن' },
+  { key:'invoices',  label:'🧾 الفواتير' },
+  { key:'accounts',  label:'💰 الحسابات' },
+  { key:'employees', label:'👷 الموظفين' },
+  { key:'salaries',  label:'💵 الرواتب' },
+  { key:'users',     label:'👑 المستخدمين', adminOnly:true },
+];
+
+function buildNav() {
+  const nav = document.getElementById('topNav');
+  const perms = currentUserData.permissions || {};
+  nav.innerHTML = '';
+  NAV_ITEMS.forEach(item => {
+    if (item.adminOnly && currentUserData.role !== 'admin') return;
+    if (!item.adminOnly && currentUserData.role !== 'admin' && !perms[item.key]) return;
+    const btn = document.createElement('button');
+    btn.className = 'tnav-btn';
+    btn.textContent = item.label;
+    btn.dataset.page = item.key;
+    btn.onclick = () => showPage(item.key);
+    nav.appendChild(btn);
+  });
+}
+
+window.showPage = function(name) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tnav-btn').forEach(b => b.classList.remove('active'));
+  const page = document.getElementById('page-' + name);
+  if (page) page.classList.add('active');
+  document.querySelectorAll('.tnav-btn').forEach(b => {
+    if (b.dataset.page === name) b.classList.add('active');
+  });
+}
+
+// ===== USERS MANAGEMENT =====
+window.createUser = async function() {
+  const name  = document.getElementById('newUserName').value.trim();
+  const email = document.getElementById('newUserEmail').value.trim();
+  const pass  = document.getElementById('newUserPass').value.trim();
+  const role  = document.getElementById('newUserRole').value;
+  const perms = getPermFromGrid('perm');
+  const errEl = document.getElementById('addUserError');
+  const btn   = document.getElementById('addUserBtn');
+
+  if (!name || !email || !pass) {
+    errEl.textContent = 'من فضلك اكتب الاسم والبريد وكلمة المرور';
+    errEl.style.display = 'block'; return;
+  }
+
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span> جاري الإنشاء...';
+  errEl.style.display = 'none';
+
+  try {
+    // Create secondary auth app to avoid logging out current admin
+    const { initializeApp: initApp2 } = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js");
+    const { getAuth: getAuth2, createUserWithEmailAndPassword: createUser2 }
+      = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js");
+
+    const app2 = initApp2(firebaseConfig, 'secondary-' + Date.now());
+    const auth2 = getAuth2(app2);
+    const cred = await createUser2(auth2, email, pass);
+    const uid = cred.user.uid;
+    await signOut(auth2);
+
+    // Save to Firestore
+    await setDoc(doc(db, 'users', uid), { name, email, role, permissions: perms, createdAt: new Date().toISOString() });
+
+    closeModal('addUserModal');
+    showToast('تم إنشاء حساب ' + name + ' بنجاح');
+    loadUsers();
+
+    // Reset form
+    document.getElementById('newUserName').value = '';
+    document.getElementById('newUserEmail').value = '';
+    document.getElementById('newUserPass').value = '';
+  } catch(e) {
+    errEl.textContent = e.code === 'auth/email-already-in-use'
+      ? 'البريد الإلكتروني مستخدم بالفعل'
+      : 'خطأ: ' + e.message;
+    errEl.style.display = 'block';
+  }
+
+  btn.disabled = false;
+  btn.textContent = '✓ إنشاء الحساب';
+}
+
+async function loadUsers() {
+  const tbody = document.getElementById('usersTableBody');
+  tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:30px;color:var(--text-dim)"><div class="spinner"></div></td></tr>';
+  try {
+    const snap = await getDocs(collection(db, 'users'));
+    tbody.innerHTML = '';
+    snap.forEach(d => {
+      const u = d.data();
+      const uid = d.id;
+      const isSelf = uid === currentUser.uid;
+      const permsCount = Object.values(u.permissions||{}).filter(Boolean).length;
+      tbody.innerHTML += `
+        <tr>
+          <td><b>${u.name||'—'}</b>${isSelf ? ' <span class="badge badge-gold" style="font-size:10px">أنت</span>' : ''}</td>
+          <td style="direction:ltr;text-align:right;font-size:12px">${u.email||'—'}</td>
+          <td><span class="badge ${ROLE_CLASSES[u.role]||'badge-gray'}">${ROLE_LABELS[u.role]||u.role}</span></td>
+          <td><span class="text-dim">${permsCount} صلاحية</span></td>
+          <td>${!isSelf ? `<button class="btn btn-secondary btn-sm" onclick="openEditUser('${uid}')">✏️ تعديل</button>` : '—'}</td>
+        </tr>`;
+    });
+  } catch(e) {
+    tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--danger);padding:20px">خطأ في تحميل البيانات</td></tr>';
+  }
+}
+
+window.openEditUser = async function(uid) {
+  editingUserId = uid;
+  const snap = await getDoc(doc(db, 'users', uid));
+  const u = snap.data();
+  document.getElementById('editUserInfo').innerHTML =
+    `<b>${u.name}</b> &nbsp;·&nbsp; <span style="direction:ltr">${u.email}</span>`;
+  document.getElementById('editUserRole').value = u.role || 'employee';
+  buildPermGrid('editPermGrid', u.permissions || ROLE_PRESETS[u.role||'employee'], 'eperm');
+  openModal('editUserModal');
+}
+
+window.saveUserEdit = async function() {
+  const role = document.getElementById('editUserRole').value;
+  const perms = getPermFromGrid('eperm');
+  await updateDoc(doc(db, 'users', editingUserId), { role, permissions: perms });
+  closeModal('editUserModal');
+  showToast('تم تحديث صلاحيات المستخدم');
+  loadUsers();
+}
+
+window.deleteUser = async function() {
+  if (!confirm('هل أنت متأكد من حذف هذا المستخدم؟')) return;
+  await deleteDoc(doc(db, 'users', editingUserId));
+  closeModal('editUserModal');
+  showToast('تم حذف المستخدم', 'error');
+  loadUsers();
+}
+
+// ===== INIT PERM GRID =====
+buildPermGrid('permGrid', ROLE_PRESETS.admin);
+</script>
+</body>
+</html>
